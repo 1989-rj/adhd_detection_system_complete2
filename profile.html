@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 style="color: var(--primary-color);">👤 My Amazing Profile 👤</h1>
+    <p class="lead">Look at all your achievements!</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card card-kid h-100">
+            <div class="card-header" style="background: var(--secondary-color); color: white;">
+                <h4><i class="fas fa-user"></i> About Me</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ user[1] }}</p>
+                <p><strong>Email:</strong> {{ user[2] }}</p>
+                <p><strong>Age:</strong> {{ user[4] }} years old</p>
+                <p><strong>Member since:</strong> {{ user[6][:10] }}</p>
+                {% if user[5] %}
+                <p><strong>Parent Contact:</strong> {{ user[5] }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card card-kid h-100">
+            <div class="card-header" style="background: var(--primary-color); color: white;">
+                <h4><i class="fas fa-chart-bar"></i> My Statistics</h4>
+            </div>
+            <div class="card-body">
+                {% if stats[0] > 0 %}
+                <p><strong>Total Tests:</strong> {{ stats[0] }}</p>
+                <p><strong>Average Score:</strong> {{ "%.1f"|format(stats[1]) }}/100</p>
+                <p><strong>Best Score:</strong> {{ stats[2] }}/100</p>
+                <p><strong>First Score:</strong> {{ stats[3] }}/100</p>
+
+                <div class="mt-3">
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-success" 
+                             role="progressbar" 
+                             style="width: {{ stats[1] }}%"
+                             aria-valuenow="{{ stats[1] }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            Avg: {{ "%.1f"|format(stats[1]) }}%
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted">No tests completed yet!</p>
+                <a href="{{ url_for('start_test') }}" class="btn btn-primary-kid">
+                    🚀 Take Your First Test!
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card card-kid">
+            <div class="card-header" style="background: var(--accent-color);">
+                <h4><i class="fas fa-trophy"></i> Achievements & Badges</h4>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    {% if stats[0] >= 1 %}
+                    <div class="col-md-3 mb-3">
+                        <div class="badge-item">
+                            <i class="fas fa-medal" style="font-size: 3rem; color: #FFD700;"></i>
+                            <p><strong>First Test</strong><br>Completed your first assessment!</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if stats[0] >= 3 %}
+                    <div class="col-md-3 mb-3">
+                        <div class="badge-item">
+                            <i class="fas fa-fire" style="font-size: 3rem; color: #FF6B6B;"></i>
+                            <p><strong>On Fire</strong><br>Completed 3 tests!</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if stats[2] and stats[2] >= 85 %}
+                    <div class="col-md-3 mb-3">
+                        <div class="badge-item">
+                            <i class="fas fa-star" style="font-size: 3rem; color: #4ECDC4;"></i>
+                            <p><strong>Superstar</strong><br>Scored 85+ points!</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if stats[0] >= 5 %}
+                    <div class="col-md-3 mb-3">
+                        <div class="badge-item">
+                            <i class="fas fa-crown" style="font-size: 3rem; color: #9B59B6;"></i>
+                            <p><strong>Champion</strong><br>Completed 5 tests!</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if stats[0] == 0 %}
+                <div class="text-center">
+                    <p class="lead">Complete tests to earn amazing badges!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-5">
+    <div class="btn-group" role="group">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary-kid">
+            <i class="fas fa-home"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('start_test') }}" class="btn btn-primary-kid">
+            <i class="fas fa-gamepad"></i> Take Another Test
+        </a>
+    </div>
+</div>
+{% endblock %}

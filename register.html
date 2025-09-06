@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="text-center mb-4">
+            <h2 style="color: var(--primary-color);">🚀 Join the Fun!</h2>
+            <p class="lead">Tell us about yourself to get started</p>
+        </div>
+
+        <form method="POST" class="needs-validation" novalidate>
+            <div class="mb-4">
+                <label for="name" class="form-label">
+                    <i class="fas fa-user text-primary"></i> Your Name *
+                </label>
+                <input type="text" 
+                       class="form-control form-control-kid" 
+                       id="name" 
+                       name="name" 
+                       required>
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="form-label">
+                    <i class="fas fa-envelope text-primary"></i> Email Address *
+                </label>
+                <input type="email" 
+                       class="form-control form-control-kid" 
+                       id="email" 
+                       name="email" 
+                       required>
+            </div>
+
+            <div class="mb-4">
+                <label for="age" class="form-label">
+                    <i class="fas fa-birthday-cake text-primary"></i> Your Age *
+                </label>
+                <select class="form-control form-control-kid" id="age" name="age" required>
+                    <option value="">Choose your age</option>
+                    <option value="8">8 years old</option>
+                    <option value="9">9 years old</option>
+                    <option value="10">10 years old</option>
+                    <option value="11">11 years old</option>
+                    <option value="12">12 years old</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="form-label">
+                    <i class="fas fa-lock text-primary"></i> Password *
+                </label>
+                <input type="password" 
+                       class="form-control form-control-kid" 
+                       id="password" 
+                       name="password" 
+                       minlength="6" 
+                       required>
+            </div>
+
+            <div class="mb-4">
+                <label for="parent_contact" class="form-label">
+                    <i class="fas fa-phone text-primary"></i> Parent's Email
+                </label>
+                <input type="email" 
+                       class="form-control form-control-kid" 
+                       id="parent_contact" 
+                       name="parent_contact">
+                <small class="form-text text-muted">
+                    So your parents can see your amazing progress!
+                </small>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary-kid btn-lg">
+                    ✨ Create My Account!
+                </button>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-secondary">
+                    Already have an account? Sign in!
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

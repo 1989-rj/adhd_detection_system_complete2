@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 style="color: var(--primary-color);">🎮 Choose Your Brain Game! 🎮</h1>
+    <p class="lead">Pick a test to show off your amazing skills!</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card card-kid h-100 text-center">
+            <div class="card-body">
+                <i class="fas fa-memory test-icon" style="color: #9B59B6;"></i>
+                <h4>Memory Test</h4>
+                <p>Can you remember the colorful sequences? Test your super memory!</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('test_page', test_type='memory') }}" class="btn btn-primary-kid">
+                        🧩 Start Memory Test
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card card-kid h-100 text-center">
+            <div class="card-body">
+                <i class="fas fa-eye test-icon" style="color: #3498DB;"></i>
+                <h4>Attention Test</h4>
+                <p>Focus on the targets and ignore the distractions. Show your focus power!</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('test_page', test_type='attention') }}" class="btn btn-secondary-kid">
+                        👁️ Start Attention Test
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card card-kid h-100 text-center">
+            <div class="card-body">
+                <i class="fas fa-search test-icon" style="color: #E67E22;"></i>
+                <h4>Perception Test</h4>
+                <p>Find patterns and spot differences. Use your detective skills!</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('test_page', test_type='perception') }}" class="btn" style="background: var(--accent-color);">
+                        🔍 Start Perception Test
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card card-kid h-100 text-center">
+            <div class="card-body">
+                <i class="fas fa-puzzle-piece test-icon" style="color: #27AE60;"></i>
+                <h4>Logic Test</h4>
+                <p>Solve puzzles and complete patterns. Show your problem-solving genius!</p>
+                <div class="mt-auto">
+                    <a href="{{ url_for('test_page', test_type='logic') }}" class="btn btn-success">
+                        🧮 Start Logic Test
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-5">
+    <div class="alert alert-warning alert-kid">
+        <h5>📝 Remember:</h5>
+        <p>Take your time, do your best, and most importantly - have fun! There are no wrong answers, only different ways of thinking.</p>
+    </div>
+</div>
+{% endblock %}

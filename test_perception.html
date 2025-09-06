@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h1 style="color: #E67E22;">🔍 Perception Test 🔍</h1>
+    <p class="lead">Find patterns and spot the differences!</p>
+</div>
+
+<div id="perception-game" class="text-center">
+    <div id="instructions" class="alert alert-info alert-kid">
+        <h4>How to Play:</h4>
+        <p>1. Look carefully at each puzzle</p>
+        <p>2. Find the pattern or spot the difference</p>
+        <p>3. Click on your answer</p>
+        <button id="start-perception" class="btn btn-warning btn-lg mt-3">
+            🕵️ Start Detective Work!
+        </button>
+    </div>
+
+    <div id="game-area" class="d-none">
+        <div class="mb-3">
+            <h4>Question <span id="question-num">1</span> of 10</h4>
+            <h5>Score: <span id="score">0</span>/25</h5>
+        </div>
+
+        <div id="question-area" class="mb-4">
+            <div class="card card-kid">
+                <div class="card-body">
+                    <h5 id="question-text">Find the different one:</h5>
+                    <div id="options-grid" class="row justify-content-center">
+                        <!-- Options will be dynamically added -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button id="next-question" class="btn btn-success btn-lg d-none">
+                ➡️ Next Question
+            </button>
+            <button id="finish-perception" class="btn btn-warning btn-lg d-none">
+                ✅ Finish Test
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+class PerceptionGame {
+    constructor() {
+        this.currentQuestion = 1;
+        this.score = 0;
+        this.questions = this.generateQuestions();
+
+        this.initializeGame();
+    }
+
+    generateQuestions() {
+        return [
+            {
+                type: 'different',
+                question: 'Find the different shape:',
+                options: ['🟦', '🟦', '🟦', '🟥'],
+                correct: 3
+            },
+            {
+                type: 'pattern',
+                question: 'Complete the pattern: 🔵🟡🔵🟡🔵?',
+                options: ['🔵', '🟡', '🟢', '🟠'],
+                correct: 1
+            },
+            {
+                type: 'different',
+                question: 'Which one is different?',
+                options: ['⭐', '⭐', '⭐', '❤️'],
+                correct: 3
+            },
+            {
+                type: 'pattern',
+                question: 'What comes next? 1️⃣2️⃣3️⃣?',
+                options: ['1️⃣', '2️⃣', '3️⃣', '4️⃣'],
+                correct: 3
+            },
+            {
+                type: 'different',
+                question: 'Find the odd one out:',
+                options: ['🐱', '🐱', '🐱', '🐶'],
+                correct: 3
+            },
+            {
+                type: 'pattern',
+                question: 'Complete: 🌞🌙🌞🌙🌞?',
+                options: ['🌞', '🌙', '⭐', '☁️'],
+                correct: 1
+            },
+            {
+                type: 'different',
+                question: 'Which is different?',
+                options: ['🍎', '🍊', '🍎', '🍎'],
+                correct: 1
+            },
+            {
+                type: 'pattern',
+                question: 'What fits? ABC_EFG',
+                options: ['A', 'B', 'C', 'D'],
+                correct: 3
+            },
+            {
+                type: 'different',
+                question: 'Spot the different one:',
+                options: ['🚗', '🚗', '🚗', '✈️'],
+                correct: 3
+            },
+            {
+                type: 'pattern',
+                question: 'Complete: 🟢🔴🟡🟢🔴?',
+                options: ['🟢', '🔴', '🟡', '🔵'],
+                correct: 2
+            }
+        ];
+    }
+
+    initializeGame() {
+        document.getElementById('start-perception').addEventListener('click', () => this.startGame());
+        document.getElementById('next-question').addEventListener('click', () => this.nextQuestion());
+        document.getElementById('finish-perception').addEventListener('click', () => this.finishTest());
+    }
+
+    startGame() {
+        document.getElementById('instructions').classList.add('d-none');
+        document.getElementById('game-area').classList.remove('d-none');
+        this.showQuestion();
+    }
+
+    showQuestion() {
+        const question = this.questions[this.currentQuestion - 1];
+        document.getElementById('question-text').textContent = question.question;
+
+        const grid = document.getElementById('options-grid');
+        grid.innerHTML = '';
+
+        question.options.forEach((option, index) => {
+            const div = document.createElement('div');
+            div.className = 'col-3 mb-3';
+            div.innerHTML = `
+                <button class="btn btn-outline-primary option-btn" 
+                        data-index="${index}" 
+                        style="font-size: 3rem; width: 100px; height: 100px;">
+                    ${option}
+                </button>
+            `;
+            grid.appendChild(div);
+        });
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleAnswer(parseInt(e.target.dataset.index)));
+        });
+    }
+
+    handleAnswer(selectedIndex) {
+        const question = this.questions[this.currentQuestion - 1];
+        const correct = selectedIndex === question.correct;
+
+        if (correct) {
+            this.score += 2.5; // 25 points total / 10 questions
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.add('btn-success');
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.remove('btn-outline-primary');
+        } else {
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.add('btn-danger');
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.remove('btn-outline-primary');
+            // Show correct answer
+            document.querySelector(`[data-index="${question.correct}"]`).classList.add('btn-success');
+            document.querySelector(`[data-index="${question.correct}"]`).classList.remove('btn-outline-primary');
+        }
+
+        // Disable all buttons
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.disabled = true;
+        });
+
+        document.getElementById('score').textContent = Math.round(this.score);
+
+        setTimeout(() => {
+            if (this.currentQuestion < 10) {
+                document.getElementById('next-question').classList.remove('d-none');
+            } else {
+                document.getElementById('finish-perception').classList.remove('d-none');
+            }
+        }, 1500);
+    }
+
+    nextQuestion() {
+        this.currentQuestion++;
+        document.getElementById('question-num').textContent = this.currentQuestion;
+        document.getElementById('next-question').classList.add('d-none');
+        this.showQuestion();
+    }
+
+    finishTest() {
+        const finalScore = Math.round(this.score);
+
+        fetch('/submit_test_result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                test_type: 'perception',
+                score: finalScore,
+                responses: []
+            })
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Amazing detective work! You scored ${finalScore} out of 25!`);
+                window.location.href = '/test/logic';
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new PerceptionGame();
+});
+</script>
+{% endblock %}

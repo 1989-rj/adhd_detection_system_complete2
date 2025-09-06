@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h1 style="color: #27AE60;">🧮 Logic Test 🧮</h1>
+    <p class="lead">Solve puzzles and show your problem-solving skills!</p>
+</div>
+
+<div id="logic-game" class="text-center">
+    <div id="instructions" class="alert alert-info alert-kid">
+        <h4>How to Play:</h4>
+        <p>1. Read each puzzle carefully</p>
+        <p>2. Think about the pattern or rule</p>
+        <p>3. Choose the best answer</p>
+        <button id="start-logic" class="btn btn-success btn-lg mt-3">
+            🎯 Start Problem Solving!
+        </button>
+    </div>
+
+    <div id="game-area" class="d-none">
+        <div class="mb-3">
+            <h4>Puzzle <span id="question-num">1</span> of 10</h4>
+            <h5>Score: <span id="score">0</span>/25</h5>
+        </div>
+
+        <div id="question-area" class="mb-4">
+            <div class="card card-kid">
+                <div class="card-body">
+                    <h5 id="question-text">What comes next?</h5>
+                    <div id="puzzle-display" class="mb-4" style="font-size: 2rem;">
+                        <!-- Puzzle will be displayed here -->
+                    </div>
+                    <div id="options-grid" class="row justify-content-center">
+                        <!-- Options will be dynamically added -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <button id="next-puzzle" class="btn btn-success btn-lg d-none">
+                ➡️ Next Puzzle
+            </button>
+            <button id="finish-logic" class="btn btn-success btn-lg d-none">
+                ✅ Finish Test
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+class LogicGame {
+    constructor() {
+        this.currentQuestion = 1;
+        this.score = 0;
+        this.questions = this.generateQuestions();
+
+        this.initializeGame();
+    }
+
+    generateQuestions() {
+        return [
+            {
+                question: 'What number comes next in the sequence?',
+                puzzle: '2, 4, 6, 8, ?',
+                options: ['9', '10', '11', '12'],
+                correct: 1
+            },
+            {
+                question: 'Complete the pattern:',
+                puzzle: '🔺🟢🔺🟢🔺?',
+                options: ['🔺', '🟢', '🔴', '🟡'],
+                correct: 1
+            },
+            {
+                question: 'If 🍎 = 3 and 🍌 = 2, what is 🍎 + 🍌?',
+                puzzle: '🍎 + 🍌 = ?',
+                options: ['4', '5', '6', '7'],
+                correct: 1
+            },
+            {
+                question: 'What comes next?',
+                puzzle: 'A, C, E, G, ?',
+                options: ['H', 'I', 'J', 'K'],
+                correct: 1
+            },
+            {
+                question: 'Complete the number pattern:',
+                puzzle: '1, 4, 7, 10, ?',
+                options: ['11', '12', '13', '14'],
+                correct: 2
+            },
+            {
+                question: 'Which shape completes the pattern?',
+                puzzle: '⭐🌙⭐🌙⭐?',
+                options: ['⭐', '🌙', '☀️', '🌟'],
+                correct: 1
+            },
+            {
+                question: 'What number is missing?',
+                puzzle: '5, 10, ?, 20, 25',
+                options: ['12', '13', '15', '18'],
+                correct: 2
+            },
+            {
+                question: 'Continue the pattern:',
+                puzzle: '🔴🔵🟡🔴🔵?',
+                options: ['🔴', '🔵', '🟡', '🟢'],
+                correct: 2
+            },
+            {
+                question: 'What comes after?',
+                puzzle: 'Monday, Wednesday, Friday, ?',
+                options: ['Saturday', 'Sunday', 'Tuesday', 'Thursday'],
+                correct: 1
+            },
+            {
+                question: 'Complete the sequence:',
+                puzzle: '100, 90, 80, 70, ?',
+                options: ['50', '60', '65', '55'],
+                correct: 1
+            }
+        ];
+    }
+
+    initializeGame() {
+        document.getElementById('start-logic').addEventListener('click', () => this.startGame());
+        document.getElementById('next-puzzle').addEventListener('click', () => this.nextQuestion());
+        document.getElementById('finish-logic').addEventListener('click', () => this.finishTest());
+    }
+
+    startGame() {
+        document.getElementById('instructions').classList.add('d-none');
+        document.getElementById('game-area').classList.remove('d-none');
+        this.showQuestion();
+    }
+
+    showQuestion() {
+        const question = this.questions[this.currentQuestion - 1];
+        document.getElementById('question-text').textContent = question.question;
+        document.getElementById('puzzle-display').textContent = question.puzzle;
+
+        const grid = document.getElementById('options-grid');
+        grid.innerHTML = '';
+
+        question.options.forEach((option, index) => {
+            const div = document.createElement('div');
+            div.className = 'col-6 col-md-3 mb-3';
+            div.innerHTML = `
+                <button class="btn btn-outline-success option-btn" 
+                        data-index="${index}" 
+                        style="font-size: 1.5rem; padding: 15px; width: 100%;">
+                    ${option}
+                </button>
+            `;
+            grid.appendChild(div);
+        });
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleAnswer(parseInt(e.target.dataset.index)));
+        });
+    }
+
+    handleAnswer(selectedIndex) {
+        const question = this.questions[this.currentQuestion - 1];
+        const correct = selectedIndex === question.correct;
+
+        if (correct) {
+            this.score += 2.5; // 25 points total / 10 questions
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.add('btn-success');
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.remove('btn-outline-success');
+            document.querySelector(`[data-index="${selectedIndex}"]`).innerHTML += ' ✅';
+        } else {
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.add('btn-danger');
+            document.querySelector(`[data-index="${selectedIndex}"]`).classList.remove('btn-outline-success');
+            document.querySelector(`[data-index="${selectedIndex}"]`).innerHTML += ' ❌';
+            // Show correct answer
+            document.querySelector(`[data-index="${question.correct}"]`).classList.add('btn-success');
+            document.querySelector(`[data-index="${question.correct}"]`).classList.remove('btn-outline-success');
+            document.querySelector(`[data-index="${question.correct}"]`).innerHTML += ' ✅';
+        }
+
+        // Disable all buttons
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.disabled = true;
+        });
+
+        document.getElementById('score').textContent = Math.round(this.score);
+
+        setTimeout(() => {
+            if (this.currentQuestion < 10) {
+                document.getElementById('next-puzzle').classList.remove('d-none');
+            } else {
+                document.getElementById('finish-logic').classList.remove('d-none');
+            }
+        }, 2000);
+    }
+
+    nextQuestion() {
+        this.currentQuestion++;
+        document.getElementById('question-num').textContent = this.currentQuestion;
+        document.getElementById('next-puzzle').classList.add('d-none');
+        this.showQuestion();
+    }
+
+    finishTest() {
+        const finalScore = Math.round(this.score);
+
+        fetch('/submit_test_result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                test_type: 'logic',
+                score: finalScore,
+                responses: []
+            })
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Brilliant problem solving! You scored ${finalScore} out of 25!`);
+                window.location.href = '/complete_assessment';
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new LogicGame();
+});
+</script>
+{% endblock %}

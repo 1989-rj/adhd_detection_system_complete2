@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="text-center mb-4">
+            <h2 style="color: var(--secondary-color);">👋 Welcome Back!</h2>
+            <p class="lead">Ready for more brain games?</p>
+        </div>
+
+        <form method="POST">
+            <div class="mb-4">
+                <label for="email" class="form-label">
+                    <i class="fas fa-envelope text-primary"></i> Email Address
+                </label>
+                <input type="email" 
+                       class="form-control form-control-kid" 
+                       id="email" 
+                       name="email" 
+                       required>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="form-label">
+                    <i class="fas fa-lock text-primary"></i> Password
+                </label>
+                <input type="password" 
+                       class="form-control form-control-kid" 
+                       id="password" 
+                       name="password" 
+                       required>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-secondary-kid btn-lg">
+                    🎯 Let's Play!
+                </button>
+                <a href="{{ url_for('register') }}" class="btn btn-outline-primary">
+                    New here? Join the fun!
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

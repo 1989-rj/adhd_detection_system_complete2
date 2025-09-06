@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 style="color: var(--primary-color);">🧠 Amazing Brain Facts! 🧠</h1>
+    <p class="lead">Learn about how different brains work in special ways!</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card card-kid h-100">
+            <div class="card-header" style="background: var(--accent-color);">
+                <h3 class="text-center mb-0">
+                    <i class="fas fa-lightbulb"></i> What is ADHD?
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="lead">ADHD stands for Attention-Deficit/Hyperactivity Disorder. It's just a fancy way of saying some brains work a little differently!</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">🌟 It makes some kids really creative and energetic</li>
+                    <li class="list-group-item">🚀 Kids with ADHD often think outside the box</li>
+                    <li class="list-group-item">🎨 They can be super focused on things they love</li>
+                    <li class="list-group-item">⚡ They bring lots of energy and new ideas</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card card-kid h-100">
+            <div class="card-header" style="background: var(--secondary-color); color: white;">
+                <h3 class="text-center mb-0">
+                    <i class="fas fa-star"></i> Fun Facts!
+                </h3>
+            </div>
+            <div class="card-body">
+                {% for fact in info.fun_facts %}
+                <div class="alert" style="background: var(--success-color); border: none; margin-bottom: 10px;">
+                    <i class="fas fa-check-circle text-success"></i> {{ fact }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card card-kid mt-4">
+    <div class="card-header" style="background: var(--primary-color); color: white;">
+        <h3 class="text-center mb-0">
+            <i class="fas fa-brain"></i> Signs That Might Mean ADHD
+        </h3>
+    </div>
+    <div class="card-body">
+        <p class="lead text-center mb-4">These are just some things that might be different - remember, everyone is unique!</p>
+        <div class="row">
+            <div class="col-md-6">
+                <h5 style="color: var(--secondary-color);">💭 Attention Signs:</h5>
+                <ul>
+                    {% for symptom in info.symptoms[:6] %}
+                    <li>{{ symptom }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h5 style="color: var(--primary-color);">⚡ Energy Signs:</h5>
+                <ul>
+                    {% for symptom in info.symptoms[6:] %}
+                    <li>{{ symptom }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-5">
+    <div class="alert alert-info alert-kid">
+        <h4>🎮 Ready to Test Your Amazing Brain? 🎮</h4>
+        <p>Now that you know more about different types of brains, let's see what makes yours special!</p>
+        <a href="{{ url_for('start_test') }}" class="btn btn-primary-kid btn-lg">
+            🚀 Start the Fun Tests!
+        </a>
+    </div>
+</div>
+{% endblock %}

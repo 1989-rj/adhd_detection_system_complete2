@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h1 style="color: #3498DB;">👁️ Attention Test 👁️</h1>
+    <p class="lead">Click only on the blue circles!</p>
+</div>
+
+<div id="attention-game" class="text-center">
+    <div id="instructions" class="alert alert-info alert-kid">
+        <h4>How to Play:</h4>
+        <p>1. Click ONLY on blue circles</p>
+        <p>2. Ignore all other shapes and colors</p>
+        <p>3. Be fast but accurate!</p>
+        <button id="start-attention" class="btn btn-secondary-kid btn-lg mt-3">
+            🎯 Start Attention Test!
+        </button>
+    </div>
+
+    <div id="game-area" class="d-none">
+        <div class="mb-3">
+            <div class="row">
+                <div class="col">Time: <span id="time-left">60</span>s</div>
+                <div class="col">Score: <span id="score">0</span></div>
+                <div class="col">Correct: <span id="correct">0</span></div>
+                <div class="col">Wrong: <span id="wrong">0</span></div>
+            </div>
+        </div>
+
+        <div id="game-canvas" style="height: 400px; border: 3px solid #3498DB; border-radius: 15px; position: relative; background: #f8f9fa;">
+            <!-- Shapes will be dynamically added here -->
+        </div>
+
+        <div class="mt-3">
+            <button id="finish-attention" class="btn btn-primary-kid btn-lg d-none">
+                ✅ Finish Test
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+class AttentionGame {
+    constructor() {
+        this.timeLeft = 60;
+        this.score = 0;
+        this.correct = 0;
+        this.wrong = 0;
+        this.gameActive = false;
+        this.shapes = [];
+        this.gameTimer = null;
+        this.spawnTimer = null;
+
+        this.initializeGame();
+    }
+
+    initializeGame() {
+        document.getElementById('start-attention').addEventListener('click', () => this.startGame());
+        document.getElementById('finish-attention').addEventListener('click', () => this.finishTest());
+    }
+
+    startGame() {
+        document.getElementById('instructions').classList.add('d-none');
+        document.getElementById('game-area').classList.remove('d-none');
+        this.gameActive = true;
+
+        this.gameTimer = setInterval(() => this.updateTimer(), 1000);
+        this.spawnTimer = setInterval(() => this.spawnShape(), 800);
+    }
+
+    updateTimer() {
+        this.timeLeft--;
+        document.getElementById('time-left').textContent = this.timeLeft;
+
+        if (this.timeLeft <= 0) {
+            this.endGame();
+        }
+    }
+
+    spawnShape() {
+        if (!this.gameActive) return;
+
+        const canvas = document.getElementById('game-canvas');
+        const shape = document.createElement('div');
+
+        const isTarget = Math.random() < 0.3; // 30% chance for blue circle
+        const shapeTypes = ['circle', 'square'];
+        const colors = ['red', 'green', 'yellow', 'purple', 'orange'];
+
+        if (isTarget) {
+            shape.className = 'game-shape target';
+            shape.style.backgroundColor = '#3498DB';
+            shape.style.borderRadius = '50%';
+        } else {
+            const shapeType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            shape.className = `game-shape distractor`;
+            shape.style.backgroundColor = color;
+            if (shapeType === 'circle') {
+                shape.style.borderRadius = '50%';
+            }
+        }
+
+        shape.style.width = '50px';
+        shape.style.height = '50px';
+        shape.style.position = 'absolute';
+        shape.style.left = Math.random() * (canvas.offsetWidth - 50) + 'px';
+        shape.style.top = Math.random() * (canvas.offsetHeight - 50) + 'px';
+        shape.style.cursor = 'pointer';
+        shape.style.transition = 'all 0.3s ease';
+
+        shape.addEventListener('click', () => this.handleShapeClick(shape, isTarget));
+
+        canvas.appendChild(shape);
+
+        // Remove shape after 3 seconds
+        setTimeout(() => {
+            if (shape.parentNode) {
+                shape.remove();
+            }
+        }, 3000);
+    }
+
+    handleShapeClick(shape, isTarget) {
+        shape.remove();
+
+        if (isTarget) {
+            this.correct++;
+            this.score += 5;
+            shape.style.backgroundColor = '#27AE60';
+        } else {
+            this.wrong++;
+            if (this.score > 0) this.score--;
+        }
+
+        document.getElementById('score').textContent = this.score;
+        document.getElementById('correct').textContent = this.correct;
+        document.getElementById('wrong').textContent = this.wrong;
+    }
+
+    endGame() {
+        this.gameActive = false;
+        clearInterval(this.gameTimer);
+        clearInterval(this.spawnTimer);
+
+        // Clear remaining shapes
+        document.getElementById('game-canvas').innerHTML = '';
+
+        document.getElementById('finish-attention').classList.remove('d-none');
+    }
+
+    finishTest() {
+        const finalScore = Math.min(25, Math.max(0, this.score));
+
+        fetch('/submit_test_result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                test_type: 'attention',
+                score: finalScore,
+                responses: [{
+                    correct: this.correct,
+                    wrong: this.wrong,
+                    total_score: this.score
+                }]
+            })
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Great focus! You scored ${finalScore} out of 25!`);
+                window.location.href = '/test/perception';
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new AttentionGame();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 style="color: var(--primary-color);">
+        🎉 Hey {{ session.user_name }}! 🎉
+    </h1>
+    <p class="lead">Ready for some brain-boosting fun?</p>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4 mb-3">
+        <div class="card card-kid h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-info-circle test-icon" style="color: var(--secondary-color);"></i>
+                <h4>Learn About ADHD</h4>
+                <p>Discover amazing facts about how your brain works!</p>
+                <a href="{{ url_for('adhd_info') }}" class="btn btn-secondary-kid">
+                    📚 Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card card-kid h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-gamepad test-icon" style="color: var(--primary-color);"></i>
+                <h4>Take Brain Tests</h4>
+                <p>Play fun games to test your amazing skills!</p>
+                <a href="{{ url_for('start_test') }}" class="btn btn-primary-kid">
+                    🚀 Start Tests
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-3">
+        <div class="card card-kid h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-user test-icon" style="color: var(--accent-color);"></i>
+                <h4>My Profile</h4>
+                <p>See your progress and achievements!</p>
+                <a href="{{ url_for('profile') }}" class="btn btn-warning">
+                    👤 View Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if test_history %}
+<div class="mt-5">
+    <h3 style="color: var(--primary-color);">📈 Your Test History</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead style="background: var(--secondary-color); color: white;">
+                <tr>
+                    <th>Date</th>
+                    <th>Memory</th>
+                    <th>Attention</th>
+                    <th>Perception</th>
+                    <th>Logic</th>
+                    <th>Total Score</th>
+                    <th>Level</th>
+                    <th>Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in test_history %}
+                <tr>
+                    <td>{{ test[1][:10] }}</td>
+                    <td>{{ test[2] }}/25</td>
+                    <td>{{ test[3] }}/25</td>
+                    <td>{{ test[4] }}/25</td>
+                    <td>{{ test[5] }}/25</td>
+                    <td><strong>{{ test[6] }}/100</strong></td>
+                    <td>
+                        <span class="badge" style="background: {% if test[6] >= 85 %}#4CAF50{% elif test[6] >= 70 %}#8BC34A{% elif test[6] >= 55 %}#FFC107{% elif test[6] >= 40 %}#FF9800{% else %}#F44336{% endif %}">
+                            {{ test[7] }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if test[8] %}
+                        <a href="{{ url_for('download_report', session_id=test[0]) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-download"></i> PDF
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="text-center mt-5">
+    <div class="alert alert-info alert-kid">
+        <h4>🌟 Ready for Your First Adventure? 🌟</h4>
+        <p>You haven't taken any tests yet! Let's start with some fun brain games.</p>
+        <a href="{{ url_for('adhd_info') }}" class="btn btn-secondary-kid me-2">Learn First</a>
+        <a href="{{ url_for('start_test') }}" class="btn btn-primary-kid">Start Testing</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

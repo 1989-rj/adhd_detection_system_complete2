@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 style="color: var(--primary-color);">🎉 Amazing Job! 🎉</h1>
+    <p class="lead">Here are your fantastic results!</p>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card card-kid text-center">
+            <div class="card-body">
+                <i class="fas fa-memory mb-3" style="font-size: 2rem; color: #9B59B6;"></i>
+                <h5>Memory Test</h5>
+                <div class="score-circle" style="background: #9B59B6;">
+                    {{ memory_score }}/25
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card card-kid text-center">
+            <div class="card-body">
+                <i class="fas fa-eye mb-3" style="font-size: 2rem; color: #3498DB;"></i>
+                <h5>Attention Test</h5>
+                <div class="score-circle" style="background: #3498DB;">
+                    {{ attention_score }}/25
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card card-kid text-center">
+            <div class="card-body">
+                <i class="fas fa-search mb-3" style="font-size: 2rem; color: #E67E22;"></i>
+                <h5>Perception Test</h5>
+                <div class="score-circle" style="background: #E67E22;">
+                    {{ perception_score }}/25
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card card-kid text-center">
+            <div class="card-body">
+                <i class="fas fa-puzzle-piece mb-3" style="font-size: 2rem; color: #27AE60;"></i>
+                <h5>Logic Test</h5>
+                <div class="score-circle" style="background: #27AE60;">
+                    {{ logic_score }}/25
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+        <div class="card card-kid">
+            <div class="card-header text-center" style="background: {{ color }}; color: white;">
+                <h3 class="mb-0">
+                    <i class="fas fa-trophy"></i> Total Score: {{ total_score }}/100
+                </h3>
+            </div>
+            <div class="card-body text-center">
+                <h4 style="color: {{ color }};">{{ assessment_level }}</h4>
+                <p class="lead">{{ recommendation }}</p>
+
+                <div class="progress mb-3" style="height: 30px;">
+                    <div class="progress-bar" 
+                         role="progressbar" 
+                         style="width: {{ total_score }}%; background: {{ color }};"
+                         aria-valuenow="{{ total_score }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        {{ total_score }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <div class="btn-group" role="group">
+        {% if session_id %}
+        <a href="{{ url_for('download_report', session_id=session_id) }}" 
+           class="btn btn-primary-kid btn-lg">
+            <i class="fas fa-download"></i> Download Report
+        </a>
+        {% endif %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary-kid btn-lg">
+            <i class="fas fa-home"></i> Back to Dashboard
+        </a>
+        <a href="{{ url_for('start_test') }}" class="btn btn-success btn-lg">
+            <i class="fas fa-redo"></i> Take Tests Again
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h1 style="color: #9B59B6;">🧩 Memory Test 🧩</h1>
+    <p class="lead">Watch the sequence, then repeat it back!</p>
+</div>
+
+<div id="memory-game" class="text-center">
+    <div id="instructions" class="alert alert-info alert-kid">
+        <h4>How to Play:</h4>
+        <p>1. Watch the colorful sequence carefully</p>
+        <p>2. Click the colors in the same order</p>
+        <p>3. Each round adds one more color!</p>
+        <button id="start-memory" class="btn btn-primary-kid btn-lg mt-3">
+            🚀 Start Memory Game!
+        </button>
+    </div>
+
+    <div id="game-area" class="d-none">
+        <div class="mb-3">
+            <h4>Level: <span id="level">1</span>/5</h4>
+            <h5>Score: <span id="score">0</span>/25</h5>
+        </div>
+
+        <div id="sequence-display" class="mb-4">
+            <h5 id="game-status">Watch carefully...</h5>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="row g-3" id="color-buttons">
+                    <div class="col-3">
+                        <button class="btn btn-danger memory-btn" data-color="red" style="width: 100px; height: 100px; border-radius: 50%;">
+                        </button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-primary memory-btn" data-color="blue" style="width: 100px; height: 100px; border-radius: 50%;">
+                        </button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-success memory-btn" data-color="green" style="width: 100px; height: 100px; border-radius: 50%;">
+                        </button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-warning memory-btn" data-color="yellow" style="width: 100px; height: 100px; border-radius: 50%;">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button id="next-level" class="btn btn-success btn-lg d-none">
+                ➡️ Next Level
+            </button>
+            <button id="finish-memory" class="btn btn-primary-kid btn-lg d-none">
+                ✅ Finish Test
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+class MemoryGame {
+    constructor() {
+        this.level = 1;
+        this.score = 0;
+        this.sequence = [];
+        this.playerSequence = [];
+        this.isShowingSequence = false;
+        this.colors = ['red', 'blue', 'green', 'yellow'];
+
+        this.initializeGame();
+    }
+
+    initializeGame() {
+        document.getElementById('start-memory').addEventListener('click', () => this.startGame());
+        document.getElementById('next-level').addEventListener('click', () => this.nextLevel());
+        document.getElementById('finish-memory').addEventListener('click', () => this.finishTest());
+
+        document.querySelectorAll('.memory-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleColorClick(e.target.dataset.color));
+        });
+    }
+
+    startGame() {
+        document.getElementById('instructions').classList.add('d-none');
+        document.getElementById('game-area').classList.remove('d-none');
+        this.generateSequence();
+        this.showSequence();
+    }
+
+    generateSequence() {
+        this.sequence = [];
+        for (let i = 0; i < this.level + 2; i++) {
+            this.sequence.push(this.colors[Math.floor(Math.random() * this.colors.length)]);
+        }
+    }
+
+    showSequence() {
+        this.isShowingSequence = true;
+        this.playerSequence = [];
+        document.getElementById('game-status').textContent = 'Watch carefully...';
+
+        this.sequence.forEach((color, index) => {
+            setTimeout(() => {
+                this.highlightColor(color);
+                if (index === this.sequence.length - 1) {
+                    setTimeout(() => {
+                        this.isShowingSequence = false;
+                        document.getElementById('game-status').textContent = 'Now repeat the sequence!';
+                    }, 800);
+                }
+            }, index * 1000);
+        });
+    }
+
+    highlightColor(color) {
+        const btn = document.querySelector(`[data-color="${color}"]`);
+        btn.style.opacity = '0.5';
+        setTimeout(() => {
+            btn.style.opacity = '1';
+        }, 600);
+    }
+
+    handleColorClick(color) {
+        if (this.isShowingSequence) return;
+
+        this.playerSequence.push(color);
+        this.highlightColor(color);
+
+        if (this.playerSequence.length === this.sequence.length) {
+            this.checkSequence();
+        }
+    }
+
+    checkSequence() {
+        const correct = this.playerSequence.every((color, index) => color === this.sequence[index]);
+
+        if (correct) {
+            this.score += 5;
+            document.getElementById('score').textContent = this.score;
+            document.getElementById('game-status').innerHTML = '🎉 Excellent! Correct sequence!';
+
+            if (this.level < 5) {
+                document.getElementById('next-level').classList.remove('d-none');
+            } else {
+                document.getElementById('finish-memory').classList.remove('d-none');
+            }
+        } else {
+            document.getElementById('game-status').innerHTML = '❌ Oops! Try the next level.';
+            if (this.level < 5) {
+                document.getElementById('next-level').classList.remove('d-none');
+            } else {
+                document.getElementById('finish-memory').classList.remove('d-none');
+            }
+        }
+    }
+
+    nextLevel() {
+        this.level++;
+        document.getElementById('level').textContent = this.level;
+        document.getElementById('next-level').classList.add('d-none');
+        this.generateSequence();
+        this.showSequence();
+    }
+
+    finishTest() {
+        // Submit score to server
+        fetch('/submit_test_result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                test_type: 'memory',
+                score: this.score,
+                responses: []
+            })
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Great job! You scored ${this.score} out of 25!`);
+                window.location.href = '/test/attention';
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new MemoryGame();
+});
+</script>
+{% endblock %}
